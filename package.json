@@ -6,12 +6,20 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "node -e \"const fs = require('fs'); const file = './node_modules/pdf-parse/index.js'; if (fs.existsSync(file)) { const code = fs.readFileSync(file, 'utf8'); fs.writeFileSync(file, code.replace('let isDebugMode = !module.parent;', 'let isDebugMode = false;')); }\""
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@supabase/auth-helpers-nextjs": "^0.15.0",
+    "@supabase/supabase-js": "^2.106.2",
+    "mammoth": "^1.12.0",
     "next": "16.2.6",
+    "pdf-parse": "^1.1.1",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@types/node": "^20",
