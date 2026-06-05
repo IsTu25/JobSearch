@@ -252,155 +252,166 @@ export default function RoadmapView() {
           </div>
 
           {/* Month Iteration */}
-          {roadmap.map((month, mIdx) => (
-            <div key={mIdx} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {/* Month Header Banner */}
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.04) 100%)',
-                borderLeft: '4px solid var(--accent)',
-                borderRadius: '0 12px 12px 0',
-                padding: '16px 20px'
-              }}>
-                <h3 style={{ fontSize: 18, fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>{month.title}</h3>
-                <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 6, fontSize: 13, color: 'var(--green)' }}>
-                  <span>🎯 Month Milestone:</span>
-                  <span style={{ fontWeight: 500 }}>{month.milestone}</span>
-                </div>
-              </div>
+          <div className="glowing-timeline glowing-timeline-active">
+            {roadmap.map((month, mIdx) => {
+              const isCompleted = month.weeks.every(w => w.topics.every(t => t.completed));
+              const hasStarted = month.weeks.some(w => w.topics.some(t => t.completed));
+              return (
+                <div key={mIdx} style={{ display: 'flex', flexDirection: 'column', gap: 16, position: 'relative', marginBottom: 32 }}>
+                  {/* Timeline dot */}
+                  <div className={`timeline-dot ${isCompleted ? 'completed' : hasStarted ? 'active' : ''}`} style={{ left: -26, top: 12 }}>
+                    {isCompleted ? '✓' : '•'}
+                  </div>
 
-              {/* Weeks Iteration */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16, paddingLeft: 8 }}>
-                {month.weeks.map((week, wIdx) => (
-                  <div key={wIdx} className="card" style={{ padding: 18 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
-                      <h4 style={{ fontSize: 15, fontWeight: 700, margin: 0, color: 'var(--accent)' }}>{week.title}</h4>
-                      <button
-                        onClick={() => scheduleWeekDayByDay(week)}
-                        className="btn btn-sm btn-secondary"
-                        style={{ fontSize: 11, padding: '4px 10px', borderRadius: 8, cursor: 'pointer' }}
-                      >
-                        📅 Schedule Week Day-by-Day
-                      </button>
-                    </div>
-                    
-                    {/* Topics/Tasks Iteration */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                      {week.topics.map((topic) => (
-                        <div 
-                          key={topic.id} 
-                          style={{ 
-                            display: 'flex', 
-                            gap: 12, 
-                            alignItems: 'flex-start',
-                            padding: '10px 12px',
-                            background: topic.completed ? 'rgba(16, 185, 129, 0.02)' : 'rgba(255, 255, 255, 0.01)',
-                            border: `1px solid ${topic.completed ? 'rgba(16, 185, 129, 0.1)' : 'var(--border)'}`,
-                            borderRadius: 8,
-                            transition: 'all 0.2s ease'
-                          }}
-                        >
-                          <input 
-                            type="checkbox"
-                            checked={topic.completed}
-                            onChange={() => dispatch({ type: 'TOGGLE_ROADMAP_TOPIC', payload: { topicId: topic.id } })}
-                            style={{ 
-                              marginTop: 3,
-                              width: 16, 
-                              height: 16, 
-                              cursor: 'pointer',
-                              accentColor: 'var(--accent)'
-                            }}
-                          />
-                          <div style={{ flex: 1 }}>
-                            <div style={{ 
-                              fontSize: 14, 
-                              color: topic.completed ? 'var(--text-muted)' : 'var(--text-primary)',
-                              textDecoration: topic.completed ? 'line-through' : 'none',
-                              lineHeight: 1.4,
-                              fontWeight: 500
-                            }}>
-                              {topic.text}
-                            </div>
-                            <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 6, flexWrap: 'wrap' }}>
-                              <span style={{ fontSize: 11, background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-secondary)', padding: '2px 8px', borderRadius: 12 }}>
-                                ⏳ {topic.hours}
-                              </span>
-                              <span style={{ fontSize: 11, color: 'var(--accent)', fontWeight: 500 }}>
-                                📚 {topic.resource}
-                              </span>
-                            </div>
-
-                            {/* Daily Scheduler controls */}
-                            <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', borderTop: '1px solid rgba(255,255,255,0.03)', paddingTop: 8 }}>
-                              {(() => {
-                                const goalId = `roadmap-${topic.id}`;
-                                const existingGoal = state.goals.find(g => g.id === goalId);
-                                if (existingGoal) {
-                                  return (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                      <span style={{ fontSize: 11, color: 'var(--green)', background: 'rgba(16, 185, 129, 0.06)', padding: '2px 8px', borderRadius: 12, fontWeight: 500 }}>
-                                        📅 Scheduled: {new Date(existingGoal.deadline).toLocaleDateString()}
-                                      </span>
-                                      <button
-                                        onClick={() => dispatch({ type: 'DELETE_GOAL', payload: goalId })}
-                                        style={{
-                                          background: 'none', border: 'none', color: 'var(--red)',
-                                          cursor: 'pointer', fontSize: 11, textDecoration: 'underline', padding: 0
-                                        }}
-                                      >
-                                        Unschedule
-                                      </button>
-                                    </div>
-                                  );
-                                }
-                                return (
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>📅 Unscheduled</span>
-                                    <input
-                                      type="date"
-                                      id={`date-${topic.id}`}
-                                      defaultValue={new Date().toISOString().split('T')[0]}
-                                      style={{
-                                        background: 'rgba(0,0,0,0.2)',
-                                        border: '1px solid var(--border)',
-                                        borderRadius: 6,
-                                        color: 'var(--text-primary)',
-                                        fontSize: 11,
-                                        padding: '2px 4px',
-                                        outline: 'none'
-                                      }}
-                                    />
-                                    <button
-                                      onClick={() => {
-                                        const dateVal = (document.getElementById(`date-${topic.id}`) as HTMLInputElement)?.value || new Date().toISOString().split('T')[0];
-                                        dispatch({
-                                          type: 'ADD_GOAL',
-                                          payload: {
-                                            id: goalId,
-                                            text: `[Roadmap] ${topic.text}`,
-                                            deadline: dateVal,
-                                            done: topic.completed
-                                          }
-                                        });
-                                      }}
-                                      className="btn btn-sm btn-secondary"
-                                      style={{ fontSize: 10, padding: '3px 8px', borderRadius: 6, cursor: 'pointer' }}
-                                    >
-                                      + Schedule Day
-                                    </button>
-                                  </div>
-                                );
-                              })()}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                  {/* Month Header Banner */}
+                  <div style={{
+                    background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.04) 100%)',
+                    borderLeft: '4px solid var(--accent)',
+                    borderRadius: '0 12px 12px 0',
+                    padding: '16px 20px'
+                  }}>
+                    <h3 style={{ fontSize: 18, fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>{month.title}</h3>
+                    <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 6, fontSize: 13, color: 'var(--green)' }}>
+                      <span>🎯 Month Milestone:</span>
+                      <span style={{ fontWeight: 500 }}>{month.milestone}</span>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          ))}
+
+                  {/* Weeks Iteration */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 16, paddingLeft: 8 }}>
+                    {month.weeks.map((week, wIdx) => (
+                      <div key={wIdx} className="card spotlight-card" style={{ padding: 18 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+                          <h4 style={{ fontSize: 15, fontWeight: 700, margin: 0, color: 'var(--accent)' }}>{week.title}</h4>
+                          <button
+                            onClick={() => scheduleWeekDayByDay(week)}
+                            className="btn btn-sm btn-secondary"
+                            style={{ fontSize: 11, padding: '4px 10px', borderRadius: 8, cursor: 'pointer' }}
+                          >
+                            📅 Schedule Week Day-by-Day
+                          </button>
+                        </div>
+                        
+                        {/* Topics/Tasks Iteration */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                          {week.topics.map((topic) => (
+                            <div 
+                              key={topic.id} 
+                              style={{ 
+                                display: 'flex', 
+                                gap: 12, 
+                                alignItems: 'flex-start',
+                                padding: '10px 12px',
+                                background: topic.completed ? 'rgba(16, 185, 129, 0.02)' : 'rgba(255, 255, 255, 0.01)',
+                                border: `1px solid ${topic.completed ? 'rgba(16, 185, 129, 0.1)' : 'var(--border)'}`,
+                                borderRadius: 8,
+                                transition: 'all 0.2s ease'
+                              }}
+                            >
+                              <input 
+                                type="checkbox"
+                                checked={topic.completed}
+                                onChange={() => dispatch({ type: 'TOGGLE_ROADMAP_TOPIC', payload: { topicId: topic.id } })}
+                                style={{ 
+                                  marginTop: 3,
+                                  width: 16, 
+                                  height: 16, 
+                                  cursor: 'pointer',
+                                  accentColor: 'var(--accent)'
+                                }}
+                              />
+                              <div style={{ flex: 1 }}>
+                                <div style={{ 
+                                  fontSize: 14, 
+                                  color: topic.completed ? 'var(--text-muted)' : 'var(--text-primary)',
+                                  textDecoration: topic.completed ? 'line-through' : 'none',
+                                  lineHeight: 1.4,
+                                  fontWeight: 500
+                                }}>
+                                  {topic.text}
+                                </div>
+                                <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 6, flexWrap: 'wrap' }}>
+                                  <span style={{ fontSize: 11, background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-secondary)', padding: '2px 8px', borderRadius: 12 }}>
+                                    ⏳ {topic.hours}
+                                  </span>
+                                  <span style={{ fontSize: 11, color: 'var(--accent)', fontWeight: 500 }}>
+                                    📚 {topic.resource}
+                                  </span>
+                                </div>
+
+                                {/* Daily Scheduler controls */}
+                                <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', borderTop: '1px solid rgba(255,255,255,0.03)', paddingTop: 8 }}>
+                                  {(() => {
+                                    const goalId = `roadmap-${topic.id}`;
+                                    const existingGoal = state.goals.find(g => g.id === goalId);
+                                    if (existingGoal) {
+                                      return (
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                          <span style={{ fontSize: 11, color: 'var(--green)', background: 'rgba(16, 185, 129, 0.06)', padding: '2px 8px', borderRadius: 12, fontWeight: 500 }}>
+                                            📅 Scheduled: {new Date(existingGoal.deadline).toLocaleDateString()}
+                                          </span>
+                                          <button
+                                            onClick={() => dispatch({ type: 'DELETE_GOAL', payload: goalId })}
+                                            style={{
+                                              background: 'none', border: 'none', color: 'var(--red)',
+                                              cursor: 'pointer', fontSize: 11, textDecoration: 'underline', padding: 0
+                                            }}
+                                          >
+                                            Unschedule
+                                          </button>
+                                        </div>
+                                      );
+                                    }
+                                    return (
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>📅 Unscheduled</span>
+                                        <input
+                                          type="date"
+                                          id={`date-${topic.id}`}
+                                          defaultValue={new Date().toISOString().split('T')[0]}
+                                          style={{
+                                            background: 'rgba(0,0,0,0.2)',
+                                            border: '1px solid var(--border)',
+                                            borderRadius: 6,
+                                            color: 'var(--text-primary)',
+                                            fontSize: 11,
+                                            padding: '2px 4px',
+                                            outline: 'none'
+                                          }}
+                                        />
+                                        <button
+                                          onClick={() => {
+                                            const dateVal = (document.getElementById(`date-${topic.id}`) as HTMLInputElement)?.value || new Date().toISOString().split('T')[0];
+                                            dispatch({
+                                              type: 'ADD_GOAL',
+                                              payload: {
+                                                id: goalId,
+                                                text: `[Roadmap] ${topic.text}`,
+                                                deadline: dateVal,
+                                                done: topic.completed
+                                              }
+                                            });
+                                          }}
+                                          className="btn btn-sm btn-secondary"
+                                          style={{ fontSize: 10, padding: '3px 8px', borderRadius: 6, cursor: 'pointer' }}
+                                        >
+                                          + Schedule Day
+                                        </button>
+                                      </div>
+                                    );
+                                  })()}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 

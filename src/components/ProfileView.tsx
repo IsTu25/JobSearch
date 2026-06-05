@@ -7,9 +7,12 @@ export default function ProfileView() {
   const { profile } = state;
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'upload' | 'builder' | 'details' | 'chunks' | 'improvement'>('upload');
+  const [activeTab, setActiveTab] = useState<'upload' | 'linkedin' | 'builder' | 'details' | 'chunks' | 'improvement'>('upload');
   const [analyzing, setAnalyzing] = useState(false);
   const [predicting, setPredicting] = useState(false);
+  const [linkedinText, setLinkedinText] = useState('');
+  const [linkedinLoading, setLinkedinLoading] = useState(false);
+  const [linkedinError, setLinkedinError] = useState('');
   const [analysisResult, setAnalysisResult] = useState<{
     score: number;
     analysis: string;
@@ -42,6 +45,55 @@ export default function ProfileView() {
   const updateProject = (idx: number, field: string, val: string) => {
     setCvProj(cvProj.map((item, i) => i === idx ? { ...item, [field]: val } : item));
   };
+
+  async function importFromLinkedIn() {
+    if (!linkedinText.trim() || linkedinText.trim().length < 30) {
+      setLinkedinError('Please paste more content — at least a few lines from your LinkedIn profile.');
+      return;
+    }
+    setLinkedinLoading(true);
+    setLinkedinError('');
+    try {
+      const res = await fetch('/api/linkedin-import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ linkedinText }),
+      });
+      const data = await res.json();
+      if (data.error) { setLinkedinError(data.error); return; }
+      // Predict roles
+      let predictedRoles = [];
+      try {
+        const rolesRes = await fetch('/api/predict-roles', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cvText: data.cvText }),
+        });
+        const rolesData = await rolesRes.json();
+        predictedRoles = rolesData.predictedRoles || [];
+      } catch {}
+      const score = {
+        contentClarity: 20, keywordOptimization: 20, quantifiedImpact: 10,
+        formatting: 12, completeness: 13, total: 75, predictedRoles,
+      };
+      dispatch({
+        type: 'SET_PROFILE',
+        payload: {
+          cvText: data.cvText,
+          cvChunks: data.chunks || [],
+          cvFileName: 'linkedin_import.txt',
+          name: data.name || profile.name,
+          targetRole: data.targetRole || profile.targetRole,
+          cvScore: score,
+        },
+      });
+      setLinkedinText('');
+      setActiveTab('chunks');
+    } catch {
+      setLinkedinError('Failed to import. Please try again.');
+    } finally {
+      setLinkedinLoading(false);
+    }
+  }
 
   async function generateSectorPredictions() {
     if (!profile.cvText) return;
@@ -269,20 +321,53 @@ export default function ProfileView() {
       </div>
 
       <div className="tab-bar">
-        {(['upload', 'builder', 'details', 'chunks', 'improvement'] as const).map(tab => (
+        {(['upload', 'linkedin', 'builder', 'details', 'chunks', 'improvement'] as const).map(tab => (
           <button key={tab} className={`tab ${activeTab === tab ? 'active' : ''}`} onClick={() => setActiveTab(tab)}>
-            {tab === 'upload' 
-              ? '📤 Upload' 
-              : tab === 'builder' 
-                ? '✨ CV Builder' 
-                : tab === 'details' 
-                  ? '👤 Profile Details' 
-                  : tab === 'chunks' 
-                    ? '🧩 CV Chunks' 
-                    : '🔮 CV Improvement'}
+            {tab === 'upload' ? '📤 Upload'
+              : tab === 'linkedin' ? '🔗 LinkedIn'
+              : tab === 'builder' ? '✨ CV Builder'
+              : tab === 'details' ? '👤 Profile Details'
+              : tab === 'chunks' ? '🧩 CV Chunks'
+              : '🔮 CV Improvement'}
           </button>
         ))}
       </div>
+
+      {activeTab === 'linkedin' && (
+        <div className="card">
+          <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 6 }}>🔗 Import from LinkedIn</h3>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 20, lineHeight: 1.6 }}>
+            Don't have a CV file? No problem. Copy your LinkedIn profile info and paste it below.
+            Go to <strong>linkedin.com → Me → View Profile</strong>, select all text (Ctrl+A) and paste here.
+          </p>
+          <textarea
+            className="input"
+            style={{ width: '100%', minHeight: 220, resize: 'vertical', fontSize: 13, lineHeight: 1.6 }}
+            value={linkedinText}
+            onChange={e => { setLinkedinText(e.target.value); setLinkedinError(''); }}
+            placeholder={`Paste your LinkedIn profile text here...\n\nExample:\nJohn Doe\nSoftware Engineer at Google\nBachelor's in Computer Science, MIT\n\nExperience:\nSoftware Engineer | Google | 2022–Present\n- Built scalable APIs serving 10M+ users\n- Led team of 5 engineers...\n\nSkills: Python, React, TypeScript, AWS...`}
+          />
+          {linkedinError && (
+            <div style={{ color: 'var(--red)', fontSize: 13, marginTop: 8, padding: '8px 12px', background: 'var(--red-bg)', borderRadius: 8 }}>
+              ⚠️ {linkedinError}
+            </div>
+          )}
+          <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
+            <button
+              className="btn btn-primary"
+              onClick={importFromLinkedIn}
+              disabled={linkedinLoading || !linkedinText.trim()}
+              style={{ flex: 1, height: 44, fontWeight: 700, justifyContent: 'center' }}
+            >
+              {linkedinLoading ? '⏳ Importing...' : '🔗 Import LinkedIn Profile'}
+            </button>
+            <button className="btn btn-secondary" onClick={() => setLinkedinText('')} disabled={!linkedinText}>Clear</button>
+          </div>
+          <div style={{ marginTop: 16, padding: '12px 16px', background: 'rgba(99,102,241,0.05)', border: '1px solid rgba(99,102,241,0.15)', borderRadius: 10, fontSize: 12, color: 'var(--text-muted)' }}>
+            💡 <strong style={{ color: 'var(--accent)' }}>Tip:</strong> For best results, include your About section, work experience, education, and skills sections from LinkedIn.
+          </div>
+        </div>
+      )}
 
       {activeTab === 'upload' && (
         <div className="card">

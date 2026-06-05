@@ -2,10 +2,26 @@ import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { CAREER_PILOT_SYSTEM_PROMPT, buildContextPrompt } from '@/lib/prompts';
 import { CVChunk } from '@/lib/types';
+import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
+import { sanitizeForAI, sanitizeField } from '@/lib/sanitize';
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 20 requests/minute per IP
+  const ip = getClientIp(req);
+  const { allowed, remaining } = checkRateLimit(ip, { maxRequests: 20, windowMs: 60_000 });
+  if (!allowed) {
+    return NextResponse.json({ error: 'Too many requests. Please wait a moment.' }, {
+      status: 429, headers: { 'X-RateLimit-Remaining': '0' }
+    });
+  }
+
   try {
-    const { message, cvChunks, profileSummary, chatHistory } = await req.json();
+    const body = await req.json();
+    const message = sanitizeForAI(body.message || '', 1000);
+    const profileSummary = sanitizeField(body.profileSummary || '', 400);
+    const cvChunks: CVChunk[] = body.cvChunks || [];
+    const chatHistory: { role: string; content: string }[] = body.chatHistory || [];
+
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {

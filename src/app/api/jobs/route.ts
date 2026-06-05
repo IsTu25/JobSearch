@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+/** Wraps a promise with a 3-second timeout using Promise.race.
+ *  If the API doesn't respond in time, it resolves to [] silently. */
+function withTimeout<T>(promise: Promise<T[]>, ms = 3000): Promise<T[]> {
+  const timeout = new Promise<T[]>((resolve) =>
+    setTimeout(() => resolve([]), ms)
+  );
+  return Promise.race([promise, timeout]);
+}
+
 interface SerperJob {
   title?: string;
   companyName?: string;
@@ -470,17 +479,17 @@ Do not wrap in markdown blocks, only return raw JSON.`;
       serperJobs, adzunaJobs, remotiveJobs, jobicyJobs, museJobs, reedJobs, upworkJobs, jsearchJobs,
       remoteokJobs, arbeitnowJobs, careerjetJobs
     ] = await Promise.all([
-      searchSerper(searchQuery, searchLocation),
-      searchAdzuna(searchQuery, searchLocation),
-      searchRemotive(searchQuery),
-      searchJobicy(searchQuery),
-      searchTheMuse(searchQuery, searchLocation),
-      searchReed(searchQuery, searchLocation),
-      searchUpwork(searchQuery),
-      searchJSearch(searchQuery, searchLocation),
-      searchRemoteOK(searchQuery),
-      searchArbeitnow(searchQuery),
-      searchCareerjet(searchQuery, searchLocation),
+      withTimeout(searchSerper(searchQuery, searchLocation)),
+      withTimeout(searchAdzuna(searchQuery, searchLocation)),
+      withTimeout(searchRemotive(searchQuery)),
+      withTimeout(searchJobicy(searchQuery)),
+      withTimeout(searchTheMuse(searchQuery, searchLocation)),
+      withTimeout(searchReed(searchQuery, searchLocation)),
+      withTimeout(searchUpwork(searchQuery)),
+      withTimeout(searchJSearch(searchQuery, searchLocation)),
+      withTimeout(searchRemoteOK(searchQuery)),
+      withTimeout(searchArbeitnow(searchQuery)),
+      withTimeout(searchCareerjet(searchQuery, searchLocation)),
     ]);
 
     const jobs: {

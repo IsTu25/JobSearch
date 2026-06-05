@@ -9,6 +9,8 @@ const navItems: { icon: string; label: string; view: ActiveView }[] = [
   { icon: '📄', label: 'My Profile', view: 'profile' },
   { icon: '📋', label: 'Tracker', view: 'tracker' },
   { icon: '🗺️', label: 'Roadmap', view: 'roadmap' },
+  { icon: '🎤', label: 'Mock Interview', view: 'interview' },
+  { icon: '💰', label: 'Salary Coach', view: 'salary' },
 ];
 
 interface SidebarProps {
@@ -29,7 +31,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       {/* Mobile backdrop */}
       {isOpen && <div className="sidebar-backdrop" onClick={onClose} />}
 
-      <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+      <aside className={`sidebar sidebar-detached ${isOpen ? 'open' : ''}`}>
         <div className="sidebar-logo" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div className="logo-icon">🚀</div>

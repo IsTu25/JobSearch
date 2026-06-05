@@ -11,7 +11,82 @@ import RoadmapView from '@/components/RoadmapView';
 import Onboarding from '@/components/Onboarding';
 import CommandPalette from '@/components/CommandPalette';
 import Auth from '@/components/Auth';
+import MockInterviewView from '@/components/MockInterviewView';
+import SalaryCoachView from '@/components/SalaryCoachView';
 import { supabase } from '@/lib/supabase';
+
+/** Dismissible banner shown to guest users warning about localStorage data loss risk. */
+function GuestDataBanner({ onSignUp }: { onSignUp: () => void }) {
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    // Re-show each session so users are reminded every time they open a new tab/window.
+    const alreadyDismissed = sessionStorage.getItem('guestBannerDismissed') === 'true';
+    if (alreadyDismissed) setDismissed(true);
+  }, []);
+
+  if (dismissed) return null;
+
+  const handleDismiss = () => {
+    sessionStorage.setItem('guestBannerDismissed', 'true');
+    setDismissed(true);
+  };
+
+  return (
+    <div
+      role="alert"
+      style={{
+        background: 'linear-gradient(90deg, rgba(234,179,8,0.08) 0%, rgba(234,179,8,0.04) 100%)',
+        borderBottom: '1px solid rgba(234,179,8,0.2)',
+        padding: '10px 24px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+        fontSize: 13,
+        flexShrink: 0,
+        flexWrap: 'wrap',
+      }}
+    >
+      <span style={{ fontSize: 16 }}>⚠️</span>
+      <span style={{ color: 'var(--text-secondary)', flex: 1, minWidth: 200 }}>
+        <strong style={{ color: 'var(--yellow)' }}>Guest mode:</strong> Your CV, applications, and goals are stored locally — they'll be lost if you clear your browser or switch devices.
+      </span>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
+        <button
+          onClick={onSignUp}
+          style={{
+            background: 'rgba(234,179,8,0.15)',
+            border: '1px solid rgba(234,179,8,0.3)',
+            color: 'var(--yellow)',
+            borderRadius: 8,
+            padding: '5px 14px',
+            fontSize: 12,
+            fontWeight: 600,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          Sign up to sync →
+        </button>
+        <button
+          onClick={handleDismiss}
+          aria-label="Dismiss warning"
+          style={{
+            background: 'none',
+            border: 'none',
+            color: 'var(--text-muted)',
+            cursor: 'pointer',
+            fontSize: 18,
+            lineHeight: 1,
+            padding: '2px 4px',
+          }}
+        >
+          ×
+        </button>
+      </div>
+    </div>
+  );
+}
 
 const viewTitles: Record<string, string> = {
   dashboard: '📊 Dashboard',
@@ -20,6 +95,8 @@ const viewTitles: Record<string, string> = {
   profile: '📄 My Profile',
   tracker: '📋 Application Tracker',
   roadmap: '🗺️ Learning Roadmap',
+  interview: '🎤 Mock Interview',
+  salary: '💰 Salary Negotiation Coach',
 };
 
 function AppContent() {
@@ -39,6 +116,22 @@ function AppContent() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Global mousemove tracker for glassmorphic card spotlights
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const cards = document.querySelectorAll('.spotlight-card');
+      cards.forEach((card) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        (card as HTMLElement).style.setProperty('--mouse-x', `${x}px`);
+        (card as HTMLElement).style.setProperty('--mouse-y', `${y}px`);
+      });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [state.activeView]);
+
   // 1. Loading screen
   if (state.authMode === 'loading') {
     return (
@@ -48,26 +141,46 @@ function AppContent() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#0b0b0f',
-        gap: 16
+        background: '#040408',
+        gap: 24,
+        position: 'relative',
+        overflow: 'hidden'
       }}>
-        <div className="pulse" style={{
-          width: 60,
-          height: 60,
-          borderRadius: 18,
+        {/* Dynamic background ambient lights */}
+        <div style={{
+          position: 'absolute',
+          width: 300,
+          height: 300,
+          borderRadius: '50%',
+          background: 'rgba(99, 102, 241, 0.15)',
+          filter: 'blur(80px)',
+          top: '30%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 0
+        }} />
+        <div style={{
+          width: 70,
+          height: 70,
+          borderRadius: 22,
           background: 'linear-gradient(135deg, var(--accent), var(--purple))',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: 28,
-          boxShadow: '0 8px 24px rgba(99, 102, 241, 0.3)',
-          animation: 'pulse 1.8s infinite'
+          fontSize: 32,
+          boxShadow: '0 10px 30px rgba(99, 102, 241, 0.4)',
+          position: 'relative',
+          zIndex: 1,
+          animation: 'pulse 2s infinite ease-in-out'
         }}>
-          ✈️
+          🚀
         </div>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 14, fontWeight: 500 }}>
-          Initializing চাকরির বাজার...
-        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 1 }}>
+          <h1 style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5, margin: 0 }}>চাকরির বাজার</h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 13, fontWeight: 500, margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span className="spinner" style={{ width: 12, height: 12 }} /> Connecting to Career Intel Engine...
+          </p>
+        </div>
       </div>
     );
   }
@@ -106,7 +219,16 @@ function AppContent() {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
       <main className="main-content">
-        <div className="top-bar">
+        {/* Guest data-loss warning banner */}
+        {state.authMode === 'guest' && (
+          <GuestDataBanner
+            onSignUp={() => {
+              localStorage.removeItem('careerpilot_guest_mode');
+              window.location.reload();
+            }}
+          />
+        )}
+        <div className="top-bar top-bar-pill">
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <button
               className="hamburger"
@@ -165,7 +287,9 @@ function AppContent() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    border: '2px solid #000'
+                    border: '2px solid #000',
+                    boxShadow: '0 0 10px var(--red)',
+                    animation: 'pulse 1.5s infinite ease-in-out'
                   }}>
                     {totalNotifications}
                   </span>
@@ -322,6 +446,8 @@ function AppContent() {
           {state.activeView === 'profile' && <ProfileView />}
           {state.activeView === 'tracker' && <TrackerView />}
           {state.activeView === 'roadmap' && <RoadmapView />}
+          {state.activeView === 'interview' && <MockInterviewView />}
+          {state.activeView === 'salary' && <SalaryCoachView />}
         </div>
       </main>
     </div>

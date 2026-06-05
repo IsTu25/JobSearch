@@ -3,6 +3,28 @@ import { useState, useEffect } from 'react';
 import { useApp } from '@/lib/store';
 import { TrackedApplication } from '@/lib/types';
 
+function requestNotificationPermission() {
+  if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
+function scheduleInterviewNotification(company: string, role: string, interviewDate: string) {
+  if (typeof window === 'undefined' || !('Notification' in window)) return;
+  if (Notification.permission !== 'granted') return;
+  const interviewTime = new Date(interviewDate).getTime();
+  const notifyTime = interviewTime - 24 * 60 * 60 * 1000; // 24h before
+  const delay = notifyTime - Date.now();
+  if (delay > 0 && delay < 7 * 24 * 60 * 60 * 1000) { // only schedule if within 7 days
+    setTimeout(() => {
+      new Notification('💼 Interview Tomorrow!', {
+        body: `${role} at ${company} is tomorrow. Good luck!`,
+        icon: '/favicon.ico',
+      });
+    }, delay);
+  }
+}
+
 const COLUMNS: { key: TrackedApplication['status']; label: string; color: string }[] = [
   { key: 'saved',        label: '🔖 Saved',        color: 'var(--blue)' },
   { key: 'applied',      label: '📤 Applied',       color: 'var(--purple)' },
@@ -25,6 +47,45 @@ export default function TrackerView() {
   const [dragOver, setDragOver] = useState<string | null>(null);
   const [newApp, setNewApp] = useState({ company: '', role: '', url: '' });
   const [activeTab, setActiveTab] = useState<'kanban' | 'goals'>('kanban');
+
+  function downloadICS(company: string, role: string, dateTimeStr: string) {
+    if (!dateTimeStr) return;
+    const date = new Date(dateTimeStr);
+    
+    // Format to YYYYMMDDTHHmmSSZ
+    const formatDate = (d: Date) => {
+      return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    };
+
+    const start = formatDate(date);
+    const end = formatDate(new Date(date.getTime() + 60 * 60 * 1000)); // 1 hour duration
+
+    const icsContent = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//চাকরির বাজার//Interview Scheduler//EN',
+      'BEGIN:VEVENT',
+      `UID:${Date.now()}@chakrirbazar.com`,
+      `DTSTAMP:${formatDate(new Date())}`,
+      `DTSTART:${start}`,
+      `DTEND:${end}`,
+      `SUMMARY:Interview: ${role} at ${company}`,
+      `DESCRIPTION:Interview preparation and discussion for the ${role} position at ${company}.`,
+      'STATUS:CONFIRMED',
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `interview_${company.toLowerCase().replace(/\s+/g, '_')}.ics`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  useEffect(() => { requestNotificationPermission(); }, []);
 
   // Goals state
   const [newGoal, setNewGoal] = useState('');
@@ -184,13 +245,14 @@ export default function TrackerView() {
                 onDragOver={e => { e.preventDefault(); setDragOver(col.key); }}
                 onDragLeave={() => setDragOver(null)}
                 onDrop={e => onDrop(e, col.key)}
+                className={dragOver === col.key ? 'kanban-dropzone-active' : ''}
                 style={{
                   background: dragOver === col.key ? 'rgba(255,255,255,0.04)' : 'var(--bg-secondary)',
                   border: `1px solid ${dragOver === col.key ? col.color : 'var(--border)'}`,
                   borderRadius: 12,
                   padding: 12,
                   minHeight: 350,
-                  transition: 'border-color 0.2s',
+                  transition: 'all 0.2s ease',
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
@@ -207,6 +269,7 @@ export default function TrackerView() {
                       key={app.id}
                       draggable
                       onDragStart={e => onDragStart(e, app.id)}
+                      className={dragging === app.id ? 'kanban-dragged' : ''}
                       style={{
                         background: 'var(--bg-card)',
                         border: '1px solid var(--border)',
@@ -235,6 +298,67 @@ export default function TrackerView() {
                         </a>
                       )}
                       
+                      {/* Interview Date (shown for interviewing status) */}
+                      {app.status === 'interviewing' && (
+                        <div style={{ marginTop: 8 }} onClick={e => e.stopPropagation()}>
+                          <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--yellow)', display: 'block', marginBottom: 4 }}>
+                            📅 Interview Date
+                          </label>
+                          <input
+                            type="datetime-local"
+                            value={(app as any).interviewDate || ''}
+                            onChange={e => {
+                              const val = e.target.value;
+                              dispatch({
+                                type: 'UPDATE_APPLICATION',
+                                payload: { id: app.id, updates: { ...(app as any), interviewDate: val, lastUpdated: new Date().toISOString() } }
+                              });
+                              if (val) scheduleInterviewNotification(app.company, app.role, val);
+                            }}
+                            style={{
+                              width: '100%', background: 'rgba(0,0,0,0.2)',
+                              border: '1px solid rgba(234,179,8,0.3)',
+                              borderRadius: 6, padding: '5px 8px',
+                              fontSize: 11, color: 'var(--text-primary)',
+                              fontFamily: 'inherit', outline: 'none',
+                            }}
+                          />
+                          {(app as any).interviewDate && (() => {
+                            const diff = Math.ceil((new Date((app as any).interviewDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                            let badge = null;
+                            if (diff < 0) badge = <span style={{ fontSize: 10, color: 'var(--red)', marginTop: 4, display: 'block' }}>⚠️ Interview passed</span>;
+                            else if (diff === 0) badge = <span style={{ fontSize: 10, color: 'var(--yellow)', fontWeight: 700, marginTop: 4, display: 'block' }}>🔥 Interview TODAY!</span>;
+                            else badge = <span style={{ fontSize: 10, color: diff <= 2 ? 'var(--yellow)' : 'var(--green)', marginTop: 4, display: 'block' }}>⏰ In {diff} day{diff !== 1 ? 's' : ''}</span>;
+
+                            return (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                {badge}
+                                <button
+                                  onClick={() => downloadICS(app.company, app.role, (app as any).interviewDate)}
+                                  style={{
+                                    display: 'block',
+                                    width: '100%',
+                                    marginTop: 4,
+                                    padding: '4px 8px',
+                                    fontSize: 10,
+                                    fontWeight: 600,
+                                    background: 'rgba(234,179,8,0.1)',
+                                    border: '1px solid rgba(234,179,8,0.2)',
+                                    color: 'var(--yellow)',
+                                    borderRadius: 6,
+                                    cursor: 'pointer',
+                                    fontFamily: 'inherit',
+                                    textAlign: 'center'
+                                  }}
+                                >
+                                  📅 Export Calendar File
+                                </button>
+                              </div>
+                            );
+                          })()}
+                        </div>
+                      )}
+
                       {/* Editable Notes */}
                       <div style={{ marginTop: 8 }} onClick={e => e.stopPropagation()}>
                         <textarea

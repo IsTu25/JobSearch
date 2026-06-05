@@ -94,12 +94,20 @@ export interface RoadmapMonth {
   weeks: RoadmapWeek[];
 }
 
-export type ActiveView = 'dashboard' | 'chat' | 'jobs' | 'profile' | 'tracker' | 'roadmap';
+export type ActiveView = 'dashboard' | 'chat' | 'jobs' | 'profile' | 'tracker' | 'roadmap' | 'interview' | 'salary';
 
 export interface Goal {
   id: string;
   text: string;
   deadline: string;
   done: boolean;
+}
+
+export interface SavedSearch {
+  id: string;
+  query: string;
+  createdAt: string;
+  lastChecked: string;
+  resultCount: number;
 }
 

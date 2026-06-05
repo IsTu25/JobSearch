@@ -108,7 +108,7 @@ export default function ChatView() {
         {state.chatMessages.map(msg => (
           <div key={msg.id} className={`chat-message ${msg.role}`}>
             {msg.role === 'assistant' ? (
-              <div className="markdown-body" style={{ fontSize: 14, lineHeight: 1.7 }}>
+              <div className="markdown-body chat-message-fade" style={{ fontSize: 14, lineHeight: 1.7 }}>
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
