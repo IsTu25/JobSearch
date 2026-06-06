@@ -60,18 +60,23 @@ alter table applications enable row level security;
 alter table goals enable row level security;
 
 -- Row Level Security policies: Users can only select, insert, update, or delete their own data
+drop policy if exists "Users can manage their own profile" on profiles;
 create policy "Users can manage their own profile"
   on profiles for all
   using (auth.uid() = user_id);
 
+drop policy if exists "Users can manage their own CV chunks" on cv_chunks;
 create policy "Users can manage their own CV chunks"
   on cv_chunks for all
   using (auth.uid() = user_id);
 
+drop policy if exists "Users can manage their own applications" on applications;
 create policy "Users can manage their own applications"
   on applications for all
   using (auth.uid() = user_id);
 
+drop policy if exists "Users can manage their own goals" on goals;
 create policy "Users can manage their own goals"
   on goals for all
   using (auth.uid() = user_id);
+

@@ -505,7 +505,7 @@ AppState.roadmap[0].weeks[1].topics[0].completed = true  ✓
 | Parameter | Value |
 |---|---|
 | Node.js version | 20.x LTS |
-| Next.js version | 16.2.6 |
+| Next.js version | 16.2.6 (Actual project dependency in package.json) |
 | Browser | Chrome 124 (Chromium engine) |
 | Test device | 1920×1080 desktop, 375×812 mobile (Chrome DevTools) |
 | Gemini model | gemini-2.5-flash |

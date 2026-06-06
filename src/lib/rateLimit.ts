@@ -2,6 +2,12 @@
  * Simple in-memory rate limiter.
  * Limits each IP to `maxRequests` per `windowMs` milliseconds.
  * Resets automatically via a cleanup interval.
+ * 
+ * ⚠️ LIMITATION & FUTURE UPGRADE:
+ * As documented in SYSTEM_DESIGN.md, this in-memory rate limiter resets on every Vercel
+ * serverless function cold start. For production-grade rate limiting across distributed 
+ * serverless instances, this should be migrated to a centralized store like Upstash Redis
+ * (using `@upstash/redis` or `@vercel/kv`).
  */
 
 interface RateLimitEntry {
