@@ -1,6 +1,6 @@
-# 🧪 CareerPilot — Evaluation & Test Cases (EVAL.md)
+# 🧪 চাকরির বাজার (Chakrir Bazar) — Evaluation & Test Cases (EVAL.md)
 
-This document contains 5 manually verified test scenarios validating the core capabilities of **CareerPilot**, confirming compatibility with DOCX ingestion, fit-scoring, semantic RAG retrieval, Kanban workflow, and mobile layouts.
+This document contains 5 manually verified test scenarios validating the core capabilities of **চাকরির বাজার (Chakrir Bazar)**, confirming compatibility with DOCX ingestion, fit-scoring, semantic RAG retrieval, Kanban workflow, and mobile layouts.
 
 ---
 

@@ -1,4 +1,4 @@
-# CareerPilot 🚀
+# চাকরির বাজার (Chakrir Bazar) 🚀
 
 > **Your Agentic Career Co-pilot.** Hunts live jobs across 7 platforms, scores your fit against your actual CV, drafts cover letters, builds personalized learning roadmaps, and tracks every application — all in one place.
 
@@ -13,13 +13,13 @@
 
 ## 🎨 Visual Showcase
 
-![CareerPilot Dashboard Mockup](./public/dashboard_preview.png)
+![চাকরির বাজার (Chakrir Bazar) Dashboard Mockup](./public/dashboard_preview.png)
 
 ---
 
 ## 💡 What It Does
 
-CareerPilot solves the fragmented job-seeking experience with four fully integrated pillars:
+চাকরির বাজার (Chakrir Bazar) solves the fragmented job-seeking experience with four fully integrated pillars:
 
 | Pillar | What it does |
 |---|---|
@@ -35,8 +35,8 @@ CareerPilot solves the fragmented job-seeking experience with four fully integra
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/your-username/careerpilot.git
-cd careerpilot
+git clone https://github.com/IsTu25/JobSearch.git
+cd JobSearch
 npm install
 ```
 
@@ -80,7 +80,7 @@ Open [http://localhost:3000](http://localhost:3000)
 ## ✨ Features
 
 ### 🔍 Pillar 1 — Job Hunter Agent
-- **Natural Language Search** — Ask queries like `"Find me ML internships in Dhaka open this month"`. CareerPilot uses Gemini 2.5 Flash on the backend to parse the query into structured parameters.
+- **Natural Language Search** — Ask queries like `"Find me ML internships in Dhaka open this month"`. চাকরির বাজার (Chakrir Bazar) uses Gemini 2.5 Flash on the backend to parse the query into structured parameters.
 - **7 Live Sources In Parallel** — Serper (Google Jobs/LinkedIn/Indeed), Adzuna, Remotive, Jobicy, The Muse, Reed.co.uk, Upwork.
 - **Programmatic Fit Scoring** — Weighted 4-component calculation:
   $$\text{Fit Score} = (\text{Skills} \times 0.45) + (\text{Experience} \times 0.30) + (\text{Education} \times 0.15) + (\text{Location} \times 0.10)$$
@@ -139,7 +139,7 @@ Open [http://localhost:3000](http://localhost:3000)
 ## 📂 Project Structure
 
 ```
-careerpilot/
+JobSearch/
 ├── src/
 │   ├── app/
 │   │   ├── api/
@@ -190,7 +190,7 @@ careerpilot/
 
 ## 🧪 Testing
 
-See **[EVALUATION_SUITE.md](./EVALUATION_SUITE.md)** for detailed logs of the 10 test cases covering all feature paths.
+See **[EVALUATION_SUITE.md](./EVALUATION_SUITE.md)** for detailed logs of the 14 test cases covering all feature paths.
 
 ---
 

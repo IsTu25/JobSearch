@@ -1,4 +1,4 @@
-# CareerPilot — System Design Document
+# চাকরির বাজার (Chakrir Bazar) — System Design Document
 
 > **Scope:** Architecture, data flow, scaling strategy to 10,000 active users, cost model, and identified bottlenecks.
 
@@ -6,7 +6,7 @@
 
 ## 1. Executive Summary
 
-CareerPilot is a stateless, serverless-first Next.js application that aggregates live job data from 7 external APIs, applies a local TF-IDF RAG engine over a user's parsed CV, and feeds retrieved context into Google Gemini 2.5 Flash for grounded career intelligence. All user state is currently persisted in `localStorage`; the scaling path replaces this with Supabase (Postgres + pgvector).
+চাকরির বাজার (Chakrir Bazar) is a stateless, serverless-first Next.js application that aggregates live job data from 7 external APIs, applies a local TF-IDF RAG engine over a user's parsed CV, and feeds retrieved context into Google Gemini 2.5 Flash for grounded career intelligence. All user state is currently persisted in `localStorage`; the scaling path replaces this with Supabase (Postgres + pgvector).
 
 ---
 

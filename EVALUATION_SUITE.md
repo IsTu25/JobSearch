@@ -1,6 +1,6 @@
-# CareerPilot — Evaluation Suite
+# চাকরির বাজার (Chakrir Bazar) — Evaluation Suite
 
-> **10 documented test cases** covering all four pillars: CV RAG pipeline, Job Hunter Agent, AI Assistant, and Productivity Tracker. Each case includes input, expected output, actual output, reproduction steps, and pass/fail verdict.
+> **14 documented test cases** covering all four pillars: CV RAG pipeline, Job Hunter Agent, AI Assistant, and Productivity Tracker. Each case includes input, expected output, actual output, reproduction steps, and pass/fail verdict.
 
 ---
 
@@ -465,7 +465,7 @@ AppState.roadmap[0].weeks[1].topics[0].completed = true  ✓
 4. Fit Score updates dynamically based on builder content without uploading external files.
 
 ### Actual Output
-- PDF file dialog opens: `careerpilot_resume.txt` downloaded successfully.
+- File save dialog opens: `resume_cv.txt` downloaded successfully.
 - State updates with new chunks.
 - Job Search results dynamically update fit scores based on details submitted in the builder form.
 
