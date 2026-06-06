@@ -13,7 +13,7 @@
 
 ## 🎨 Visual Showcase
 
-![CareerPilot Dashboard Mockup](./public/careerpilot_dashboard_mockup.png)
+![CareerPilot Dashboard Mockup](./public/dashboard_preview.png)
 
 ---
 
