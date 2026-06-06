@@ -45,3 +45,7 @@ next-env.d.ts
 repomix-output.xml
 repomix*
 
+# agents
+AGENTS.md
+CLAUDE.md
+

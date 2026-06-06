@@ -165,9 +165,8 @@ JobSearch/
 │       ├── tfidf.ts                     # TF-IDF vectorizer + cosine similarity
 │       └── types.ts                     # All TypeScript interfaces
 ├── .env.example                         # Environment variable template
-├── EVALUATION_SUITE.md                  # 10 test cases with logs
+├── EVALUATION_SUITE.md                  # 14 test cases with logs
 ├── SYSTEM_DESIGN.md                     # Architecture + scaling + cost model
-├── AGENTS.md                            # AI agent rules
 └── README.md
 ```
 
