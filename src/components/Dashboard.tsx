@@ -196,7 +196,7 @@ export default function Dashboard() {
           <button 
             className="btn btn-sm btn-primary"
             onClick={() => {
-              localStorage.removeItem('careerpilot_guest_mode');
+              localStorage.removeItem('chakrir_bazar_guest_mode');
               dispatch({ type: 'SET_USER', payload: { user: null, authMode: 'supabase' } });
             }}
             style={{ 

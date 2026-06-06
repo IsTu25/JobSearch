@@ -190,7 +190,7 @@ function AppContent() {
     return (
       <Auth 
         onGuest={() => {
-          localStorage.setItem('careerpilot_guest_mode', 'true');
+          localStorage.setItem('chakrir_bazar_guest_mode', 'true');
           dispatch({ type: 'SET_USER', payload: { user: null, authMode: 'guest' } });
         }}
       />
@@ -223,7 +223,7 @@ function AppContent() {
         {state.authMode === 'guest' && (
           <GuestDataBanner
             onSignUp={() => {
-              localStorage.removeItem('careerpilot_guest_mode');
+              localStorage.removeItem('chakrir_bazar_guest_mode');
               window.location.reload();
             }}
           />
@@ -401,7 +401,7 @@ function AppContent() {
             ) : state.authMode === 'guest' ? (
               <button 
                 onClick={() => {
-                  localStorage.removeItem('careerpilot_guest_mode');
+                  localStorage.removeItem('chakrir_bazar_guest_mode');
                   window.location.reload();
                 }}
                 className="btn btn-secondary"

@@ -1,4 +1,4 @@
-# CareerPilot 🚀 Upgrade Implementation Plan
+# চাকরির বাজার (Chakrir Bazar) 🚀 Upgrade Implementation Plan
 
 Track progress through the 10/10 feature enhancement roadmap.
 
@@ -8,7 +8,7 @@ Track progress through the 10/10 feature enhancement roadmap.
 
 ```mermaid
 gantt
-    title CareerPilot Upgrade Timeline
+    title চাকরির বাজার (Chakrir Bazar) Upgrade Timeline
     dateFormat  YYYY-MM-DD
     section Phase 1: DB & Auth
     Supabase Install & Scaffolding  :active, 2026-05-28, 1d

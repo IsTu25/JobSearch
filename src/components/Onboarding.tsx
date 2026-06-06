@@ -20,14 +20,14 @@ export default function Onboarding() {
 
   useEffect(() => {
     // Show only if onboarding has not been completed, no CV uploaded, and no applications saved
-    const completed = localStorage.getItem('careerpilot_onboarding_completed') === 'true';
+    const completed = localStorage.getItem('chakrir_bazar_onboarding_completed') === 'true';
     if (!completed && !state.cvUploaded && state.applications.length === 0) {
       setIsOpen(true);
     }
   }, [state.cvUploaded, state.applications.length]);
 
   const handleClose = () => {
-    localStorage.setItem('careerpilot_onboarding_completed', 'true');
+    localStorage.setItem('chakrir_bazar_onboarding_completed', 'true');
     setIsOpen(false);
   };
 

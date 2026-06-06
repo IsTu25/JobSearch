@@ -173,7 +173,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (session?.user) {
         dispatch({ type: 'SET_USER', payload: { user: session.user, authMode: 'supabase' } });
       } else {
-        const isGuest = localStorage.getItem('careerpilot_guest_mode') === 'true';
+        const isGuest = localStorage.getItem('chakrir_bazar_guest_mode') === 'true';
         if (isGuest) {
           dispatch({ type: 'SET_USER', payload: { user: null, authMode: 'guest' } });
         } else {
@@ -188,7 +188,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (session?.user) {
         dispatch({ type: 'SET_USER', payload: { user: session.user, authMode: 'supabase' } });
       } else {
-        const isGuest = localStorage.getItem('careerpilot_guest_mode') === 'true';
+        const isGuest = localStorage.getItem('chakrir_bazar_guest_mode') === 'true';
         if (isGuest) {
           dispatch({ type: 'SET_USER', payload: { user: null, authMode: 'guest' } });
         } else {
@@ -285,8 +285,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       } else if (state.authMode === 'guest') {
         // Fallback to LocalStorage
         try {
-          const saved = localStorage.getItem('careerpilot_state');
-          const savedGoals = localStorage.getItem('careerpilot_goals');
+          const saved = localStorage.getItem('chakrir_bazar_state');
+          const savedGoals = localStorage.getItem('chakrir_bazar_goals');
           const parsed = saved ? JSON.parse(saved) : {};
           const parsedGoals = savedGoals ? JSON.parse(savedGoals) : [];
           dispatch({
@@ -361,7 +361,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             cvUploaded: state.cvUploaded,
             roadmap: state.roadmap,
           };
-          localStorage.setItem('careerpilot_state', JSON.stringify(toSave));
+          localStorage.setItem('chakrir_bazar_state', JSON.stringify(toSave));
         } catch {}
       }
     };
@@ -380,7 +380,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           cvUploaded: state.cvUploaded,
           roadmap: state.roadmap,
         };
-        localStorage.setItem('careerpilot_state', JSON.stringify(toSave));
+        localStorage.setItem('chakrir_bazar_state', JSON.stringify(toSave));
       }
       return;
     }
@@ -443,7 +443,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       };
       syncGoals();
     } else if (state.authMode === 'guest') {
-      localStorage.setItem('careerpilot_goals', JSON.stringify(state.goals));
+      localStorage.setItem('chakrir_bazar_goals', JSON.stringify(state.goals));
     }
   }, [state.goals, state.authMode, state.user]);
 

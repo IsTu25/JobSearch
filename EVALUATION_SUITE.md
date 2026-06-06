@@ -349,7 +349,7 @@ Recommendation: Focus on DSA first (4-6 weeks), then system design (4 weeks).
 Before: Applied=1, Interviewing=0
 Action: Drag "Meta — Software Engineer" → Interviewing
 After:  Applied=0, Interviewing=1
-localStorage["careerpilot_state"].applications[0].status = "interviewing" ✓
+localStorage["chakrir_bazar_state"].applications[0].status = "interviewing" ✓
 Dashboard stat card "Interviewing" shows: 1 ✓
 ```
 
@@ -406,7 +406,7 @@ AppState.roadmap[0].weeks[1].topics[0].completed = true  ✓
 3. Click "Continue as Guest" or enter credentials to sign up.
 
 ### Expected Output
-1. If clicking Guest Mode: `localStorage` item `careerpilot_guest_mode` is set to `"true"`, dispatches state `SET_USER` with `authMode: "guest"`.
+1. If clicking Guest Mode: `localStorage` item `chakrir_bazar_guest_mode` is set to `"true"`, dispatches state `SET_USER` with `authMode: "guest"`.
 2. If using Supabase Email auth: triggers `supabase.auth.signInWithPassword()` or `signUp()`, establishes active JWT session, dispatches `SET_USER` with `authMode: "supabase"`.
 3. App transitions to Dashboard immediately.
 
