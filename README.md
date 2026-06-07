@@ -4,6 +4,10 @@
 
 **Built for Codesprint 2026 | Powered by Poridhi.io**
 
+> [!IMPORTANT]
+> **New to the project?** Read the comprehensive **[Complete Features Guide (FEATURES_GUIDE.md)](./FEATURES_GUIDE.md)** for a deep dive into every feature (AI Mock Interviewer, Salary Coach, Command Palette, etc.), their purpose, how they work under the hood, and how to interact with them in the application.
+
+
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
 [![Gemini](https://img.shields.io/badge/Gemini-2.5_Flash-blue?logo=google)](https://aistudio.google.com)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://typescriptlang.org)
