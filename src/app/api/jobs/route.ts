@@ -445,7 +445,7 @@ export async function POST(req: NextRequest) {
       // Run the query parsing request with Gemini 2.5 Flash
       try {
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
         
         const prompt = `Analyze this natural-language job search query and extract structured search parameters.
 Query: "${query}"

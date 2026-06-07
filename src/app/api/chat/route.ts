@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
     const systemPrompt = CAREER_PILOT_SYSTEM_PROMPT + '\n\n' + contextPrompt;
 
     const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-1.5-flash',
       systemInstruction: systemPrompt,
     });
 
