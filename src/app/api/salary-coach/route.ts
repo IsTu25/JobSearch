@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.5-flash',
       systemInstruction: SALARY_COACH_SYSTEM_PROMPT + `\n\n[CANDIDATE CONTEXT]\nTarget Role: ${targetRole || 'Not specified'}\nCurrent Offer Details: ${currentOffer || 'Not specified yet'}\nCV Summary: ${cvContext || 'Not provided'}`,
     });
 

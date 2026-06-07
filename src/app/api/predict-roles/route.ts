@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
     const prompt = `You are an AI career advisor and tech recruiter.
 Analyze the following CV text and predict the top 3 most suitable job roles/sectors for this candidate based on their skills, experience, and projects.
