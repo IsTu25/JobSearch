@@ -83,6 +83,9 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ## ✨ Features
 
+> [!TIP]
+> For a detailed guide on how every feature is built, where the code resides, and how the data flows, read the **[FEATURES_GUIDE.md](./FEATURES_GUIDE.md)**.
+
 ### 🔍 Pillar 1 — Job Hunter Agent
 - **Natural Language Search** — Ask queries like `"Find me ML internships in Dhaka open this month"`. চাকরির বাজার (Chakrir Bazar) uses Gemini 2.5 Flash on the backend to parse the query into structured parameters.
 - **7 Live Sources In Parallel** — Serper (Google Jobs/LinkedIn/Indeed), Adzuna, Remotive, Jobicy, The Muse, Reed.co.uk, Upwork.
@@ -107,6 +110,11 @@ Open [http://localhost:3000](http://localhost:3000)
 - **Inline Card Notes** — Edit application notes directly on cards to save interview details.
 - **Interactive Roadmaps** — Generates monthly learning roadmap checklists. Checkboxes dynamically calculate the completeness percentage.
 - **Proactive AI Nudges** — Alerts you when you go inactive and recommends top matched jobs based on fit scores.
+
+### 🚀 Additional Advanced Features
+- **🎤 AI Mock Interview Mode** — Conduct realistic 8-question simulations of behavioral, situational, and technical questions with voice speech recognition input and structured STAR rubric feedback.
+- **💰 Salary Negotiation Coach** — Stream custom counter-offer recommendations, Glassdoor/Levels.fyi market research, and copy-paste templates to navigate pushback.
+- **⌨️ Global Command Palette** — Open with `Cmd+K` or `Ctrl+K` to quickly navigate across views, trigger actions, or execute preset AI prompts.
 
 ---
 
